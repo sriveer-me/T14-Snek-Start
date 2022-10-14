@@ -30,17 +30,17 @@ public:
 	Game( class MainWindow& wnd );
 	Game( const Game& ) = delete;
 	Game& operator=( const Game& ) = delete;
+	~Game();
 	void Go();
 private:
 	void ComposeFrame();
 	void UpdateModel();
-	/********************************/
-	/*  User Functions              */
-	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
+
 	/********************************/
 	/*  User Variables              */
+	std::vector<std::vector<Color>> _colors;
 	/********************************/
 };

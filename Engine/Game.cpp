@@ -20,17 +20,41 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "Board.h"
+#include <random>
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd )
 {
+	Board::Initialize(gfx);
+	Board::set_GridWidth(20);
+	Board::set_GridHeight(20);
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distr(0, 255);
+
+	//Create random colors for grid
+	for (int i = 0; i < Board::GridLengthX(); i++)
+	{
+		_colors.push_back(std::vector<Color>());
+		for (int j = 0; j < Board::GridLengthY(); j++)
+		{
+			_colors[i].push_back(Color(distr(gen), distr(gen), distr(gen)));
+		}
+	}
+}
+
+Game::~Game()
+{
+	Board::DeInitialize();
 }
 
 void Game::Go()
 {
-	gfx.BeginFrame();	
+	gfx.BeginFrame();
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
@@ -42,4 +66,12 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	//Create random colors for grid
+	for (int i = 0; i < Board::GridLengthX(); i++)
+	{
+		for (int j = 0; j < Board::GridLengthY(); j++)
+		{
+			Board::Draw(i, j, _colors[i][j]);
+		}
+	}
 }
