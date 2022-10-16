@@ -399,3 +399,4 @@ FodyWeavers.xsd
 *.sln.iml
 /Engine/FramebufferPS.shh
 /Engine/FramebufferVS.shh
+/Engine/sigslot.h

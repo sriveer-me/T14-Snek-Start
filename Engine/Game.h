@@ -20,9 +20,15 @@
  ******************************************************************************************/
 #pragma once
 
+//#define SIGSLOT_PURE_ISO
+//#include "sigslot.h"
+
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "Snek.h"
+
+
 
 class Game
 {
@@ -32,15 +38,19 @@ public:
 	Game& operator=( const Game& ) = delete;
 	~Game();
 	void Go();
+
 private:
 	void ComposeFrame();
 	void UpdateModel();
+
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 
 	/********************************/
 	/*  User Variables              */
-	std::vector<std::vector<Color>> _colors;
+	std::pair<int, int> _snekDirection = std::make_pair<int,int>(0,0);
+	Snek _snek;
+
 	/********************************/
 };

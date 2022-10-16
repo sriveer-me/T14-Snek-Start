@@ -31,20 +31,6 @@ Game::Game( MainWindow& wnd )
 	Board::Initialize(gfx);
 	Board::set_GridWidth(20);
 	Board::set_GridHeight(20);
-
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> distr(0, 255);
-
-	//Create random colors for grid
-	for (int i = 0; i < Board::GridLengthX(); i++)
-	{
-		_colors.push_back(std::vector<Color>());
-		for (int j = 0; j < Board::GridLengthY(); j++)
-		{
-			_colors[i].push_back(Color(distr(gen), distr(gen), distr(gen)));
-		}
-	}
 }
 
 Game::~Game()
@@ -62,16 +48,56 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	//direction handling
+	static bool directionSet = false;
+	if (wnd.kbd.KeyIsPressed(VK_LEFT) && 
+		_snekDirection != std::make_pair<int,int>(1,0) && 
+		_snekDirection != std::make_pair<int,int>(0,0) && 
+		directionSet == false)
+	{
+		_snekDirection = std::make_pair<int, int>(-1, 0);
+		directionSet = true;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_RIGHT) && _snekDirection != std::make_pair<int,int>(-1,0) && directionSet == false)
+	{
+		_snekDirection = std::make_pair<int, int>(1, 0);
+		directionSet = true;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_UP) && _snekDirection != std::make_pair<int,int>(0,1) && directionSet == false)
+	{
+		_snekDirection = std::make_pair<int, int>(0, -1);
+		directionSet = true;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_DOWN) && _snekDirection != std::make_pair<int,int>(0,-1) && directionSet == false)
+	{
+		_snekDirection = std::make_pair<int, int>(0, 1);
+		directionSet = true;
+	}
+
+	//debug test snek growth for now
+	static bool growthDone = false;
+	if (wnd.kbd.KeyIsPressed(VK_SPACE) && growthDone == false)
+	{
+		_snek.Grow();
+		growthDone = true;
+	}
+	if (!wnd.kbd.KeyIsPressed(VK_SPACE))
+	{
+		growthDone = false;
+	}
+
+	//greater value here means the snek moves slowly
+	static int speedCounter = 0;
+	speedCounter++;
+	if (speedCounter >= 30)
+	{
+		_snek.Update(_snekDirection);
+		speedCounter = 0;
+		directionSet = false;
+	}
 }
 
 void Game::ComposeFrame()
 {
-	//Create random colors for grid
-	for (int i = 0; i < Board::GridLengthX(); i++)
-	{
-		for (int j = 0; j < Board::GridLengthY(); j++)
-		{
-			Board::Draw(i, j, _colors[i][j]);
-		}
-	}
+	_snek.Draw();
 }
